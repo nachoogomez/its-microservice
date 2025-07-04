@@ -1,0 +1,23 @@
+
+> client-gateway@0.0.1 start
+> nest start
+
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +7ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/api/products}:[39m[38;5;3m +4ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/pre-order, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/confirm-purchase/:userId, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/products/pre-orders/:userId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+[32m[Nest] 20104  - [39m07/03/2025, 6:10:48 PM [32m    LOG[39m [38;5;3m[ClientGateway] [39m[32mClient Gateway is running on port 3000[39m
