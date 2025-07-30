@@ -9,6 +9,8 @@ Este proyecto contiene la implementación de microservicios desarrollados como p
 ## Estructura del Proyecto
 
 - `its-facturas-ms/` - Microservicio de gestión de facturas
+- `its-productos-ms/` - Microservicio de productos
+- `its-users-ms/` - Microservicio de usuarios
 
 ## Tecnologías Utilizadas
 
