@@ -12,9 +12,12 @@ Este proyecto contiene la implementación de microservicios desarrollados como p
 
 ## Tecnologías Utilizadas
 
-- Node.js
+- Nestjs
 - Express.js
-- Docker (si aplica)
+- Docker  
+- PostgreSQL
+- MongoDB
+- MySQL
 
 ## Instalación
 
@@ -40,7 +43,7 @@ npm start
 
 ## Autor
 
-Estudiante de Desarrollo Web - ITS Cipolletti
+Ignacio Gomez Estudiante de Desarrollo Web - ITS Cipolletti
 
 ---
 
