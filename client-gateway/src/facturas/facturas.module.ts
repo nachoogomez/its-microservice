@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { FacturasService } from './facturas.service';
 import { FacturaController } from './facturas.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { AuthModule } from '../auth/auth.module';
 import { envs } from 'src/config';
 
 @Module({
@@ -9,6 +10,7 @@ import { envs } from 'src/config';
   providers: [FacturasService],
   exports: [FacturasService],
   imports: [
+    AuthModule,
     ClientsModule.register([
       {
         name: 'MS_FACTURA',
@@ -24,6 +26,14 @@ import { envs } from 'src/config';
         options: {
           host: envs.USERS_MICROSERVICE_HOST,
           port: envs.USERS_MICROSERVICE_PORT,
+        },
+      },
+      {
+        name: 'MS_PRODUCTOS',
+        transport: Transport.TCP,
+        options: {
+          host: envs.PRODUCTS_MICROSERVICE_HOST,
+          port: envs.PRODUCTS_MICROSERVICE_PORT,
         },
       },
     ]),
