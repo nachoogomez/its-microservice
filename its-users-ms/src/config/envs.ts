@@ -4,12 +4,14 @@ import * as joi from 'joi';
 interface EnvVars {
   AUTH_PORT: number;
   AUTH_HOST: string;
+  JWT_SECRET: string;
 }
 
 const envsSchema = joi
   .object({
     AUTH_PORT: joi.number().required(),
     AUTH_HOST: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -24,4 +26,5 @@ const envVars: EnvVars = value;
 export const envs = {
   AUTH_PORT: envVars.AUTH_PORT,
   AUTH_HOST: envVars.AUTH_HOST,
+  JWT_SECRET: envVars.JWT_SECRET,
 };
