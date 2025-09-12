@@ -1,5 +1,5 @@
 export interface RpcResponse<T = any> {
   statusCode: number;
-  data?: T;       
-  error?: string; 
+  data?: T;
+  error?: string;
 }

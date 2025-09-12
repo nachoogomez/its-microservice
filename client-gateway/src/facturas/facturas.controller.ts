@@ -1,11 +1,20 @@
-import { Controller, Get, Post, Body, Inject, HttpException, UseGuards, Req, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Inject,
+  HttpException,
+  UseGuards,
+  Req,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
 import { RpcResponse } from '../common/interfaces/rpc-response.interface';
 import { CreateFacturaDto } from './dto/create-factura.dto';
 import { AuthGuard } from '@nestjs/passport';
-
-
 
 @Controller('facturas')
 export class FacturaController {
@@ -22,18 +31,18 @@ export class FacturaController {
         this.facturaClient.send({ facturas: 'findAll' }, {}),
       );
 
-      const userIds = [...new Set(facturas.map(f => f.cliente))];
+      const userIds = [...new Set(facturas.map((f) => f.cliente))];
 
       const usuarios: Record<string, any> = {};
 
       for (const id of userIds) {
         const usuario = await firstValueFrom(
-          this.userClient.send({ users: 'find-by-id' }, id),
+          this.userClient.send('findOneUser', { id: parseInt(id, 10) }),
         );
         usuarios[id] = usuario;
       }
 
-      const facturasConUsuario = facturas.map(f => ({
+      const facturasConUsuario = facturas.map((f) => ({
         ...f,
         usuario: usuarios[f.cliente] || null,
       }));
@@ -50,7 +59,7 @@ export class FacturaController {
   async crearFactura(@Req() req, @Body() dto: CreateFacturaDto) {
     const facturaCompleta = {
       ...dto,
-      cliente: req.user.sub,
+      cliente: String(req.user.sub), // Convertir a string
     };
 
     return await firstValueFrom(
@@ -65,7 +74,7 @@ export class FacturaController {
     );
 
     const usuario = await firstValueFrom(
-      this.userClient.send({ users: 'find-by-id' }, factura.cliente),
+      this.userClient.send('findOneUser', { id: parseInt(factura.cliente, 10) }),
     );
 
     return { ...factura, usuario };

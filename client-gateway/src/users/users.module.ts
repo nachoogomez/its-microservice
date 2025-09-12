@@ -3,7 +3,6 @@ import { UsersController } from './users.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { envs, USERS_SERVICE } from 'src/config';
 
-
 @Module({
   controllers: [UsersController],
   providers: [],
@@ -12,11 +11,12 @@ import { envs, USERS_SERVICE } from 'src/config';
       {
         name: USERS_SERVICE,
         transport: Transport.TCP,
-        options:{
+        options: {
           host: envs.USERS_MICROSERVICE_HOST,
-          port: envs.USERS_MICROSERVICE_PORT
-        }
-      }])
+          port: envs.USERS_MICROSERVICE_PORT,
+        },
+      },
+    ]),
   ],
 })
 export class UsersModule {}

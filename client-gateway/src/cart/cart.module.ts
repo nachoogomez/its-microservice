@@ -11,20 +11,20 @@ import { envs, PRODUCTS_SERVICE, USERS_SERVICE } from 'src/config';
       {
         name: USERS_SERVICE,
         transport: Transport.TCP,
-        options:{
+        options: {
           host: envs.USERS_MICROSERVICE_HOST,
-          port: envs.USERS_MICROSERVICE_PORT
-        }
+          port: envs.USERS_MICROSERVICE_PORT,
+        },
       },
       {
-        name:PRODUCTS_SERVICE,
+        name: PRODUCTS_SERVICE,
         transport: Transport.TCP,
         options: {
           host: envs.PRODUCTS_MICROSERVICE_HOST,
-          port: envs.PRODUCTS_MICROSERVICE_PORT
-        }
-      }
-    ])
+          port: envs.PRODUCTS_MICROSERVICE_PORT,
+        },
+      },
+    ]),
   ],
 })
 export class CartModule {}

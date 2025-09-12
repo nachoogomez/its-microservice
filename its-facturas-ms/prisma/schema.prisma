@@ -15,16 +15,20 @@ datasource db {
 }
 
 model Factura {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String
-  productos Json
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  numero    Int
+  fecha     DateTime
+  cliente   String        // userId del cliente
   total     Float
-  createdAt DateTime @default(now())
+  items     FacturaItem[]
+  createdAt DateTime     @default(now())
 }
 
-model Item {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  descripcion  String
-  cantidad     Int
-  precio       Float
+model FacturaItem {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  facturaId   String  @db.ObjectId
+  descripcion String
+  cantidad    Int
+  precio      Float
+  factura     Factura @relation(fields: [facturaId], references: [id])
 }

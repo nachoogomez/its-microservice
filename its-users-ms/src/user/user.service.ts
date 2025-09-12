@@ -8,7 +8,6 @@ import { rpcError } from './helpers/rpc.helpers';
 import { LoginDto } from './dto/login.dto';
 import { PayloadInterface } from 'src/common/interfaces/payload.interface';
 
-
 @Injectable()
 export class UserService {
   constructor(
@@ -23,11 +22,11 @@ export class UserService {
 
   // This method is used to create a new user
   async create(newUser: CreateUserDto) {
-    if (!newUser){
+    if (!newUser) {
       throw rpcError('Invalid user data', HttpStatus.BAD_REQUEST);
     }
 
-   const existingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.user.findUnique({
       where: { email: newUser.email },
     });
 
@@ -35,14 +34,16 @@ export class UserService {
       throw rpcError('Email already in use', HttpStatus.CONFLICT);
     }
 
-    const hashedPassword = await this.authService.hashPassword(newUser.password);
+    const hashedPassword = await this.authService.hashPassword(
+      newUser.password,
+    );
     return this.prisma.user.create({
       data: {
         email: newUser.email,
         password: hashedPassword,
         name: newUser.name,
       },
-      })
+    });
   }
 
   // This method is used to find all users
@@ -50,16 +51,16 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-
   async update(id: number, updateUserDto: UpdateUserDto) {
-    
-      const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw rpcError('User not found', HttpStatus.NOT_FOUND);
     }
 
     if (updateUserDto.password) {
-      updateUserDto.password = await this.authService.hashPassword(updateUserDto.password);
+      updateUserDto.password = await this.authService.hashPassword(
+        updateUserDto.password,
+      );
     }
 
     return this.prisma.user.update({
@@ -82,14 +83,14 @@ export class UserService {
 
   async login(loginDto: LoginDto) {
     const user = await this.prisma.user.findUnique({
-    where: { email: loginDto.email },
-    select: {
-    id: true,
-    email: true,
-    password: true,
-    name: true,
-    },
-  });
+      where: { email: loginDto.email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        name: true,
+      },
+    });
 
     if (!user) {
       throw rpcError('User not found', HttpStatus.NOT_FOUND);
@@ -108,7 +109,6 @@ export class UserService {
       throw rpcError('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    
     return {
       sub: user.id,
       email: user.email,
@@ -116,32 +116,34 @@ export class UserService {
     };
   }
 
-
   // This method is used to remove a user by id
   async remove(id: number | string) {
+    const userId = typeof id === 'string' ? parseInt(id, 10) : id;
+    if (isNaN(userId)) {
+      throw rpcError('Invalid user id', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw rpcError(`User not found`, HttpStatus.NOT_FOUND);
+    }
+
     try {
-      const userId = typeof id === 'string' ? parseInt(id, 10) : id;
-      if (isNaN(userId)) {
-        throw rpcError('Invalid user id', HttpStatus.BAD_REQUEST);
-      }
-
-      const user = await this.prisma.user.findUnique({ where: { id: userId } });
-      
-      if (!user) {
-        throw rpcError(`User not found`, HttpStatus.NOT_FOUND);
-      }
-
-      return this.prisma.user.delete({
+      return await this.prisma.user.delete({
         where: { id: userId },
       });
     } catch (err: any) {
-      throw rpcError(`Error: ${err?.message || err}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw rpcError(
+        `Error deleting user: ${err?.message || err}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   async cleanOldCarts() {
     try {
-      const oneDayAgo = new Date()
+      const oneDayAgo = new Date();
       oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
       const oldItems = await this.prisma.cart.findMany({
@@ -151,46 +153,46 @@ export class UserService {
           },
         },
       });
-      
-       if (oldItems.length > 0) {
+
+      if (oldItems.length > 0) {
         const ids = oldItems.map((item) => item.id);
         await this.prisma.cart.deleteMany({
           where: { id: { in: ids } },
         });
         console.log(` Se eliminaron ${ids.length} items viejos del carrito`);
-     }
-    } 
-    catch (error) {
-      throw rpcError(`Error cleaning old carts: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } catch (error) {
+      throw rpcError(
+        `Error cleaning old carts: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   async addToCart(userId: number, productId: number, quantity: number) {
-
     const existingCartItem = await this.prisma.cart.findUnique({
-    where: {
-      userId_productId: {
-        userId,
-        productId
-      },
-    },
-  });
-   if (existingCartItem) {
-    return this.prisma.cart.update({
-      where: { id: existingCartItem.id },
-      data: { quantity: existingCartItem.quantity + quantity },
-    });
-  } else {
-    return this.prisma.cart.create({
-      data: {
-        userId,
-        productId,
-        quantity,
+      where: {
+        userId_productId: {
+          userId,
+          productId,
+        },
       },
     });
+    if (existingCartItem) {
+      return this.prisma.cart.update({
+        where: { id: existingCartItem.id },
+        data: { quantity: existingCartItem.quantity + quantity },
+      });
+    } else {
+      return this.prisma.cart.create({
+        data: {
+          userId,
+          productId,
+          quantity,
+        },
+      });
+    }
   }
-}
-
 
   async getCart(userId: number) {
     return this.prisma.cart.findMany({
@@ -200,7 +202,7 @@ export class UserService {
 
   async removeFromCart(userId: number, productId: number) {
     const cartItem = await this.prisma.cart.findUnique({
-      where: { 
+      where: {
         userId_productId: {
           userId,
           productId,

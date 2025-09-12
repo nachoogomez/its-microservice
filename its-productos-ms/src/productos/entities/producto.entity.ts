@@ -1,5 +1,4 @@
 import { Column,OneToMany, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { PreOrder } from './preorder.entity';
 
 @Entity('products')
 export class Product {
@@ -24,6 +23,6 @@ export class Product {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
 
-    @OneToMany(() => PreOrder, (preOrder) => preOrder.product)
-    preOrders: PreOrder[];
+    @OneToMany('PreOrder', 'product')
+    preOrders: any[];
 }

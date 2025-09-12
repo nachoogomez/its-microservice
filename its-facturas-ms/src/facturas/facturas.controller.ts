@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { FacturaService } from './facturas.service';
 import { CreateFacturaDto } from './dto/create-factura.dto';
 
@@ -8,22 +8,50 @@ export class FacturaController {
   constructor(private readonly facturaService: FacturaService) {}
 
   @MessagePattern({ facturas: 'create' })
-  create(@Payload() data: CreateFacturaDto) {
-    return this.facturaService.create(data);
+  async create(@Payload() data: CreateFacturaDto) {
+    try {
+      return await this.facturaService.create(data);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        error: error.message || 'Error interno del servidor',
+      });
+    }
   }
 
   @MessagePattern({ facturas: 'findAll' })
-  findAll() {
-    return this.facturaService.findAll();
+  async findAll() {
+    try {
+      return await this.facturaService.findAll();
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        error: error.message || 'Error interno del servidor',
+      });
+    }
   }
 
-  @MessagePattern({ facturas: 'findOne' })
-  findOne(@Payload() id: string) {
-    return this.facturaService.findOne(id);
+  @MessagePattern({ facturas: 'find-by-id' })
+  async findOne(@Payload() id: string) {
+    try {
+      return await this.facturaService.findOne(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        error: error.message || 'Error interno del servidor',
+      });
+    }
   }
 
   @MessagePattern({ facturas: 'remove' })
-  remove(@Payload() id: string) {
-    return this.facturaService.remove(id);
+  async remove(@Payload() id: string) {
+    try {
+      return await this.facturaService.remove(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        error: error.message || 'Error interno del servidor',
+      });
+    }
   }
 }

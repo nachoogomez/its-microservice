@@ -4,7 +4,7 @@ import { RpcResponse } from '../../common/interfaces/rpc-response.interface';
 
 export function rpcError(
   errorMessage: string,
-  statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR
+  statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR,
 ): RpcException {
   const error: RpcResponse = {
     statusCode,

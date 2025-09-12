@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { FacturasService } from './facturas.service';
-import { FacturasController } from './facturas.controller';
+import { FacturaController } from './facturas.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { envs } from 'src/config';
 
 @Module({
-  controllers: [FacturasController],
+  controllers: [FacturaController],
   providers: [FacturasService],
+  exports: [FacturasService],
   imports: [
     ClientsModule.register([
       {
@@ -22,7 +23,7 @@ import { envs } from 'src/config';
         transport: Transport.TCP,
         options: {
           host: envs.USERS_MICROSERVICE_HOST,
-          port: envs.USERS_MICROSERVICE_PORT 
+          port: envs.USERS_MICROSERVICE_PORT,
         },
       },
     ]),

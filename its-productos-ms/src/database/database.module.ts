@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { envs } from "../config/envs";
 import { Product } from "src/productos/entities/producto.entity";
-import { PreOrder } from "src/productos/entities/preorder.entity";
+import { PreOrder } from "src/preorders/entities/preorder.entity";
 
 @Module({
   imports: [

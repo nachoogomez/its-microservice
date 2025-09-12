@@ -12,7 +12,7 @@ interface EnvVars {
 }
 
 const envsSchema = joi.object({
-    MS_PRODUCT_PORT: joi.string().required(),  
+    MS_PRODUCT_PORT: joi.number().required(),  
     MS_PRODUCT_HOST: joi.string().required(), 
     DB_HOST: joi.string().required(),
     DB_PORT: joi.number().required(),

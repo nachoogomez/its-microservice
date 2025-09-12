@@ -3,7 +3,8 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { CreatePreOrderDto } from './dto/create-preorder.dto';
+import { PaginationDto } from '../common';
+import { FindProductsDto } from './dto/find-products.dto';
 
 @Controller()
 export class ProductosController {
@@ -15,8 +16,18 @@ export class ProductosController {
   }
 
   @MessagePattern('findAllProductos')
-  findAll() {
-    return this.productosService.findAll();
+  findAll(@Payload() paginationDto: PaginationDto) {
+    return this.productosService.findAll(paginationDto);
+  }
+
+  @MessagePattern('findAllProductosNoPagination')
+  findAllNoPagination() {
+    return this.productosService.findAllNoPagination();
+  }
+
+  @MessagePattern('searchProductos')
+  searchProducts(@Payload() findProductsDto: FindProductsDto) {
+    return this.productosService.searchProducts(findProductsDto);
   }
 
   @MessagePattern('findOneProducto')
@@ -34,18 +45,4 @@ export class ProductosController {
     return this.productosService.remove(payload.id);
   }
 
-  @MessagePattern('confirmPurchase')
-  confirmPurchase(@Payload() userId: number) {
-    return this.productosService.confirmPurchase(userId);
-  }
-
-  @MessagePattern('findAllPreOrder')
-  findAllPreOrder(@Payload() userId?: number) {
-    return this.productosService.findAllPreOrder(userId);
-  }
-
-  @MessagePattern('createPreOrder')
-   createPreOrder(@Payload() dto: CreatePreOrderDto) {
-    return this.productosService.createPreOrder(dto);
-  }
 }

@@ -1,4 +1,4 @@
 export interface RpcResponse {
-    statusCode: number;
-    error: string;
+  statusCode: number;
+  error: string;
 }

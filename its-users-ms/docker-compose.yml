@@ -1,15 +1,16 @@
-version: '3'
-
 services:
   users-db:
-    container_name: users_database
+    container_name: user_database
     image: postgres:16.2
     restart: always
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=usersdb
+      - POSTGRES_PASSWORD=root123
+      - POSTGRES_DB=user_db
+
+
+# Puerto cambiado porque no me funcionaba el default 

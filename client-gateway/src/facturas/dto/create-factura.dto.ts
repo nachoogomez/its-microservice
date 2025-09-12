@@ -1,22 +1,29 @@
-import { IsDate, IsInt, IsNumber, IsPositive, IsString, ValidateNested, ArrayMinSize } from 'class-validator';
+import {
+  IsDate,
+  IsInt,
+  IsNumber,
+  IsPositive,
+  IsString,
+  ValidateNested,
+  ArrayMinSize,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
-class FacturaItemDto {
+export class FacturaItemDto {
   @IsString()
   descripcion: string;
 
-  
-  @IsInt()
+  @IsNumber()
   @IsPositive()
   cantidad: number;
 
-  
   @IsNumber()
   @IsPositive()
   precio: number;
 }
 
 export class CreateFacturaDto {
+  @IsNumber()
   @IsInt()
   numero: number;
 
@@ -27,7 +34,6 @@ export class CreateFacturaDto {
   @IsString()
   cliente: string;
 
-  
   @IsNumber()
   @IsPositive()
   total: number;

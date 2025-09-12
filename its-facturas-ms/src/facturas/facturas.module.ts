@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { FacturasService } from './facturas.service';
-import { FacturasController } from './facturas.controller';
+import { FacturaService } from './facturas.service';
+import { FacturaController } from './facturas.controller';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  controllers: [FacturasController],
-  providers: [FacturasService],
+  imports: [PrismaModule],
+  controllers: [FacturaController],
+  providers: [FacturaService],
 })
 export class FacturasModule {}

@@ -10,7 +10,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @MessagePattern('login')
-  login(@Payload() payload: LoginDto){
+  login(@Payload() payload: LoginDto) {
     return this.userService.login(payload);
   }
 
@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @MessagePattern('updateUser')
-  update(@Payload() payload:{id: number; updateUserDto: UpdateUserDto}) {
+  update(@Payload() payload: { id: number; updateUserDto: UpdateUserDto }) {
     return this.userService.update(payload.id, payload.updateUserDto);
   }
 
@@ -50,7 +50,13 @@ export class UserController {
   }
 
   @MessagePattern('addToCart')
-  addToCart(@Payload() payload: { userId: number; productId: number; quantity: number }) {
-    return this.userService.addToCart(payload.userId, payload.productId, payload.quantity);
+  addToCart(
+    @Payload() payload: { userId: number; productId: number; quantity: number },
+  ) {
+    return this.userService.addToCart(
+      payload.userId,
+      payload.productId,
+      payload.quantity,
+    );
   }
 }
