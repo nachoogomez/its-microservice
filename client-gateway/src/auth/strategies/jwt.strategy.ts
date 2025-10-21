@@ -27,15 +27,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    */
 
   validate(payload: JwtPayload): any {
-    console.log('🔍 JWT Strategy validate() called with payload:', payload);
-    
-    if (!payload.sub || !payload.email || !payload.name) {
-      console.log('❌ Invalid token payload - missing required fields');
+    if (!payload.sub || !payload.email || !payload.name || !payload.role) {
       throw new UnauthorizedException('Invalid token payload');
     }
 
     if (payload.exp && Date.now() >= payload.exp * 1000) {
-      console.log('❌ Token expired');
       throw new UnauthorizedException('Token expired');
     }
 
@@ -44,9 +40,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userId: payload.sub,
       email: payload.email,
       name: payload.name,
+      role: payload.role,
     };
-    
-    console.log('✅ JWT validation successful, returning user:', user);
+
     return user;
   }
 }

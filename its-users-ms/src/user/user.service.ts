@@ -20,7 +20,6 @@ export class UserService {
     });
   }
 
-  // This method is used to create a new user
   async create(newUser: CreateUserDto) {
     if (!newUser) {
       throw rpcError('Invalid user data', HttpStatus.BAD_REQUEST);
@@ -42,11 +41,11 @@ export class UserService {
         email: newUser.email,
         password: hashedPassword,
         name: newUser.name,
+        role: newUser.role || 'USER',
       },
     });
   }
 
-  // This method is used to find all users
   async findAll() {
     return this.prisma.user.findMany();
   }
@@ -69,7 +68,6 @@ export class UserService {
     });
   }
 
-  // This method is used to find a user by id
   async findOne(id: number | string) {
     const userId = typeof id === 'string' ? parseInt(id, 10) : id;
     const user = await this.prisma.user.findUnique({
@@ -89,6 +87,7 @@ export class UserService {
         email: true,
         password: true,
         name: true,
+        role: true,
       },
     });
 
@@ -113,10 +112,10 @@ export class UserService {
       sub: user.id,
       email: user.email,
       name: user.name ?? '',
+      role: user.role,
     };
   }
 
-  // This method is used to remove a user by id
   async remove(id: number | string) {
     const userId = typeof id === 'string' ? parseInt(id, 10) : id;
     if (isNaN(userId)) {
@@ -195,9 +194,27 @@ export class UserService {
   }
 
   async getCart(userId: number) {
-    return this.prisma.cart.findMany({
+    const cartItems = await this.prisma.cart.findMany({
       where: { userId },
     });
+
+    const cartItemsWithProducts = await Promise.all(
+      cartItems.map(async (item) => {
+        try {
+          return {
+            ...item,
+            product: null
+          };
+        } catch (error) {
+          return {
+            ...item,
+            product: null
+          };
+        }
+      })
+    );
+
+    return cartItemsWithProducts;
   }
 
   async removeFromCart(userId: number, productId: number) {

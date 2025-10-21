@@ -28,7 +28,7 @@ const envsSchema = joi
       .string()
       .valid('development', 'production', 'test')
       .default('development'),
-    ALLOWED_ORIGINS: joi.string().default('http://localhost:3000'),
+    ALLOWED_ORIGINS: joi.string().default('http://localhost:4200,http://localhost:3000'),
   })
   .unknown(true);
 

@@ -26,21 +26,36 @@ export class ProductsController {
   //Get all products with pagination
   @Get()
   async getAllProducts(@Query() paginationDto: PaginationDto) {
-    return handleRpcResponse(
+    const result = await handleRpcResponse(
       this.productsClient,
       'findAllProductos',
       paginationDto,
     );
+    
+    // Wrap the response in the required nested data structure
+    return {
+      data: {
+        data: result.data,
+        meta: result.meta
+      }
+    };
   }
 
   //Get all products without pagination
   @Get('all')
   async getAllProductsNoPagination() {
-    return handleRpcResponse(
+    const products = await handleRpcResponse(
       this.productsClient,
       'findAllProductosNoPagination',
       {},
     );
+    
+    // Wrap the response in the required nested data structure
+    return {
+      data: {
+        data: products
+      }
+    };
   }
 
   //Search products with filters and pagination

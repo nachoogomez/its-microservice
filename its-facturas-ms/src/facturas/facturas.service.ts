@@ -10,11 +10,12 @@ export class FacturaService {
 
   async create(data: CreateFacturaDto) {
     this.logger.log(`Iniciando creación de factura para cliente: ${data.cliente}`);
-    
+
     try {
-      const { items, ...facturaData } = data;
-      
-      // Validar que el número de factura no exista
+      const { items, usuarioId, ...facturaData } = data;
+
+      this.logger.log(`Usuario ID recibido: ${usuarioId}, Cliente: ${data.cliente}`);
+
       const facturaExistente = await this.prisma.factura.findFirst({
         where: { numero: facturaData.numero },
       });
@@ -24,12 +25,13 @@ export class FacturaService {
         throw new BadRequestException(`Ya existe una factura con el número ${facturaData.numero}`);
       }
 
-      // Usar transacción para crear factura y items
       const result = await this.prisma.$transaction(async (tx) => {
-        // Crear la factura
         const factura = await tx.factura.create({
           data: {
-            ...facturaData,
+            numero: facturaData.numero,
+            fecha: facturaData.fecha,
+            cliente: facturaData.cliente,
+            total: facturaData.total,
             items: {
               create: items,
             },
@@ -46,11 +48,11 @@ export class FacturaService {
       return result;
     } catch (error) {
       this.logger.error(`Error al crear factura: ${error.message}`, error.stack);
-      
+
       if (error instanceof BadRequestException) {
         throw error;
       }
-      
+
       throw new BadRequestException('Error al crear la factura: ' + error.message);
     }
   }
@@ -91,22 +93,37 @@ export class FacturaService {
 
   async remove(id: string) {
     try {
-      // Verificar que la factura existe antes de eliminar
       const facturaExistente = await this.prisma.factura.findUnique({
         where: { id },
+        include: {
+          items: true,
+        },
       });
 
       if (!facturaExistente) {
         throw new NotFoundException(`Factura con ID ${id} no encontrada`);
       }
 
-      return await this.prisma.factura.delete({
-        where: { id },
-        include: {
-          items: true,
-        },
+      this.logger.log(`Eliminando factura con ID: ${id}`);
+
+      return await this.prisma.$transaction(async (tx) => {
+        await tx.facturaItem.deleteMany({
+          where: { facturaId: id },
+        });
+
+        this.logger.log(`Items eliminados para factura ${id}`);
+
+        const factura = await tx.factura.delete({
+          where: { id },
+        });
+
+        this.logger.log(`Factura ${id} eliminada exitosamente`);
+
+        return factura;
       });
     } catch (error) {
+      this.logger.error(`Error al eliminar factura ${id}: ${error.message}`, error.stack);
+
       if (error instanceof NotFoundException) {
         throw error;
       }

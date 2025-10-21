@@ -1,3 +1,8 @@
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
 /**
  * Interface that defines the structure of the JWT payload
  * used for authentication and authorization
@@ -9,6 +14,8 @@ export interface JwtPayload {
   email: string;
   /** User full name */
   name: string;
+  /** User role */
+  role: UserRole;
   /** Token issued at timestamp */
   iat?: number;
   /** Token expiration timestamp */
@@ -23,4 +30,5 @@ export interface ValidatedUser {
   userId: number;
   email: string;
   name: string;
+  role: UserRole;
 }

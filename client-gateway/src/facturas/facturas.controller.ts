@@ -58,37 +58,28 @@ export class FacturaController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async crearFactura(@Req() req, @Body() dto: CreateFacturaDto) {
-    console.log('🔍 FacturaController.crearFactura() called');
-    console.log('📝 Request body:', dto);
-    console.log('👤 Request user:', req.user);
-    
     try {
-      // Validar que el usuario existe antes de crear la factura
-      const userId = req.user?.sub || req.user?.userId;
-      console.log('🆔 Extracted userId:', userId);
-      
-      if (!userId) {
-        console.log('❌ No userId found in request');
+      const authUserId = req.user?.sub || req.user?.userId;
+      const targetUserId = dto.usuarioId || authUserId;
+
+      if (!authUserId) {
         throw new HttpException('Usuario no autenticado', 401);
       }
 
-      // Verificar que el usuario existe en el sistema
-      try {
-        await firstValueFrom(
-          this.userClient.send('findOneUser', { id: parseInt(String(userId), 10) }),
-        );
-      } catch (userError) {
-        throw new HttpException('Usuario no encontrado en el sistema', 404);
+      if (!targetUserId) {
+        throw new HttpException('No se pudo determinar el usuario para la factura', 400);
       }
 
-      // Validar que los productos existen y tienen stock
+      try {
+        await firstValueFrom(
+          this.userClient.send('findOneUser', { id: parseInt(String(targetUserId), 10) }),
+        );
+      } catch (userError) {
+        throw new HttpException('Usuario destino no encontrado en el sistema', 404);
+      }
+
       for (const item of dto.items) {
         try {
-          // Aquí deberías validar con el microservicio de productos
-          // const producto = await firstValueFrom(
-          //   this.productosClient.send('findOneProduct', { id: item.productId }),
-          // );
-          console.log(`Validando producto: ${item.descripcion}`);
         } catch (productError) {
           throw new HttpException(`Producto no encontrado: ${item.descripcion}`, 404);
         }
@@ -96,7 +87,8 @@ export class FacturaController {
 
       const facturaCompleta = {
         ...dto,
-        cliente: String(userId), // Convertir a string
+        cliente: String(targetUserId),
+        usuarioId: parseInt(String(targetUserId), 10),
       };
 
       const factura = await firstValueFrom(
@@ -109,11 +101,11 @@ export class FacturaController {
       };
     } catch (error) {
       const { statusCode = 500, error: mensaje } = error as RpcResponse;
-      
+
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       throw new HttpException(
         mensaje ?? 'Error interno del servidor al crear la factura',
         statusCode,

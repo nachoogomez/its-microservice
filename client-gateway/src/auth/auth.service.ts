@@ -34,6 +34,7 @@ export class AuthService {
       sub: payload.sub,
       email: payload.email,
       name: payload.name,
+      role: payload.role,
     };
 
     return this.jwtService.signAsync(jwtPayload);
@@ -77,6 +78,31 @@ export class AuthService {
     } catch (error) {
       this.logger.error(`User validation failed for ${email}:`, error);
       throw new UnauthorizedException('Invalid credentials');
+    }
+  }
+
+  /**
+   * Registers a new user through the user microservice
+   * @param registerDto - The registration data
+   * @returns Promise<PayloadInterface> - The created user payload
+   * @throws ConflictException if email already exists
+   */
+  async registerUser(registerDto: any): Promise<PayloadInterface> {
+    try {
+      const user: unknown = await handleRpcResponse(this.userClient, 'createUser', {
+        email: registerDto.email,
+        password: registerDto.password,
+        name: registerDto.nombre,
+      });
+
+      this.logger.log(`User ${registerDto.email} registered successfully`);
+      return user as PayloadInterface;
+    } catch (error) {
+      this.logger.error(`User registration failed for ${registerDto.email}:`, error);
+      if (error.message === 'Email already in use') {
+        throw error;
+      }
+      throw new UnauthorizedException('Registration failed');
     }
   }
 

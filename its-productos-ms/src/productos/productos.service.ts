@@ -42,7 +42,6 @@ export class ProductosService {
       const offset = (page - 1) * limit;
 
       const [products, total] = await this.productoRepository.findAndCount({
-        where: { isActive: true },
         skip: offset,
         take: limit,
         order: { createdAt: 'DESC' }
@@ -80,26 +79,31 @@ export class ProductosService {
 
   async searchProducts(findProductsDto: FindProductsDto): Promise<PaginatedResponse<Product>> {
     try {
-      const { 
-        page = 1, 
-        limit = 10, 
-        search, 
-        minPrice, 
-        maxPrice, 
-        inStock, 
-        isActive = true 
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        minPrice,
+        maxPrice,
+        inStock,
+        isActive
       } = findProductsDto;
-      
+
       if (page < 1) {
         throw rpcError('Page number must be greater than 0', 400);
       }
-      
+
       if (limit < 1 || limit > 100) {
         throw rpcError('Limit must be between 1 and 100', 400);
       }
 
       const offset = (page - 1) * limit;
-      const whereConditions: any = { isActive };
+      const whereConditions: any = {};
+
+      // Solo agregar filtro isActive si se proporciona explícitamente
+      if (isActive !== undefined) {
+        whereConditions.isActive = isActive;
+      }
 
       if (search) {
         whereConditions.nombre = Like(`%${search}%`);

@@ -1,13 +1,14 @@
-import { 
-  IsNumber, 
-  IsString, 
-  IsDate, 
-  IsArray, 
-  ValidateNested, 
+import {
+  IsNumber,
+  IsString,
+  IsDate,
+  IsArray,
+  ValidateNested,
   ArrayMinSize,
   IsPositive,
   Min,
   IsInt,
+  IsOptional,
   Validate,
   ValidationArguments,
   ValidatorConstraint,
@@ -77,7 +78,13 @@ export class CreateFacturaDto {
   fecha: Date;
 
   @IsString()
-  cliente: string;
+  cliente: string; // ID del usuario al que se le asigna la factura (como string)
+
+  @IsNumber()
+  @IsInt()
+  @IsPositive()
+  @IsOptional() // Campo opcional - si no viene, usar cliente
+  usuarioId?: number;
 
   @IsNumber()
   @IsPositive()

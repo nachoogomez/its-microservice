@@ -81,6 +81,11 @@ export class CreateFacturaDto {
   cliente?: string;
 
   @IsNumber()
+  @IsInt()
+  @IsOptional() // ID del usuario al que se le asigna la factura (opcional, si no se provee usa el del JWT)
+  usuarioId?: number;
+
+  @IsNumber()
   @IsPositive()
   @Validate(TotalMatchesItemsConstraint)
   total: number;

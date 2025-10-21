@@ -29,7 +29,6 @@ export class CartController {
   @Post('add-item')
   async addItem(@Usuario() user: any, @Body() dto: CartAddDto) {
     try {
-      console.log('🔍 Buscando producto con ID:', dto.productId); // Debug
 
       const product = await handleRpcResponse(
         this.productClient,
@@ -37,31 +36,20 @@ export class CartController {
         { id: dto.productId },
       );
 
-      console.log('📦 Producto encontrado:', product); // Debug
-
+  
       if (!product) {
-        console.log('❌ Producto no encontrado'); // Debug
         throw new HttpException('Producto no encontrado', HttpStatus.NOT_FOUND);
       }
 
-      console.log('📊 Verificando stock:', {
-        requested: dto.quantity,
-        available: product.stock,
-      }); // Debug
-
       if (dto.quantity > product.stock) {
-        console.log('❌ Stock insuficiente'); // Debug
         throw new HttpException('Stock insuficiente', HttpStatus.CONFLICT);
       }
 
       const userId = user?.id || user?.userId || user?.sub;
-      console.log('🆔 UserId extraído:', userId); // Debug
 
       if (!userId) {
         throw new HttpException('Usuario no válido', HttpStatus.UNAUTHORIZED);
       }
-
-      console.log('➕ Agregando al carrito...'); // Debug
 
       const result = await handleRpcResponse(this.userClient, 'addToCart', {
         userId: Number(userId),
@@ -69,10 +57,8 @@ export class CartController {
         quantity: dto.quantity,
       });
 
-      console.log('✅ Producto agregado al carrito:', result); // Debug
       return result;
     } catch (error) {
-      console.error('💥 Error en addItem:', error); // Debug
       throw error;
     }
   }
@@ -92,5 +78,46 @@ export class CartController {
       userId: Number(userId),
       productId: Number(productId),
     });
+  }
+
+  @Get()
+  async getCart(@Usuario() user: any) {
+    try {
+      const userId = user?.id || user?.userId || user?.sub;
+
+      if (!userId) {
+        throw new HttpException('Usuario no válido', HttpStatus.UNAUTHORIZED);
+      }
+
+      const cartItems = await handleRpcResponse(this.userClient, 'getCart', {
+        userId: Number(userId)
+      });
+
+      const enrichedCartItems = await Promise.all(
+        cartItems.map(async (item: any) => {
+          try {
+            const product = await handleRpcResponse(
+              this.productClient,
+              'findOneProducto',
+              { id: item.productId }
+            );
+
+            return {
+              ...item,
+              product: product || null
+            };
+          } catch (error) {
+            return {
+              ...item,
+              product: null
+            };
+          }
+        })
+      );
+
+      return enrichedCartItems;
+    } catch (error) {
+      throw error;
+    }
   }
 }
